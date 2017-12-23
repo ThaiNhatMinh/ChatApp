@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{bfe36855-effd-46a2-b9f6-91852d673c08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared\ImGui">
+      <UniqueIdentifier>{503b2a4d-237f-44ec-83b8-13bebc09eab1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -30,6 +36,51 @@
     <ClInclude Include="Client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Shared\Application.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\imguiMesh.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Net.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\OpenGLRenderer.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Shader.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\SystemUI.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Texture.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Windows.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\header.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\imgui\imconfig.h">
+      <Filter>Shared\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\imgui\imgui.h">
+      <Filter>Shared\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\imgui\imgui_internal.h">
+      <Filter>Shared\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\imgui\stb_rect_pack.h">
+      <Filter>Shared\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\imgui\stb_textedit.h">
+      <Filter>Shared\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\imgui\stb_truetype.h">
+      <Filter>Shared\ImGui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -46,6 +97,33 @@
     </ClCompile>
     <ClCompile Include="Client.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Application.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\imguiMesh.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\OpenGLRenderer.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Shader.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\SystemUI.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Windows.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\imgui\imgui.cpp">
+      <Filter>Shared\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\imgui\imgui_demo.cpp">
+      <Filter>Shared\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\imgui\imgui_draw.cpp">
+      <Filter>Shared\ImGui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

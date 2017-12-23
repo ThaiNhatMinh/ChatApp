@@ -3,15 +3,17 @@
 
 int __cdecl main(void)
 {
-	Server ma;
-	if (!ma.Init())
-	{
-		printf("Cannot init server.");
-		return 0;
-	}
+	//Server ma;
+	//if (!ma.Init())
+	//{
+	//	printf("Cannot init server.");
+	//	return 0;
+	//}
 
-	ma.Loop();
+	//ma.Loop();
 
+	Application app;
+	app.RunMainLoop();
 	return 0;
 }
 

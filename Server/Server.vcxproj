@@ -72,6 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>E:\University Of Science\MMT\ChatApp\Shared\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -89,6 +91,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,6 +146,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Shared\Application.h" />
+    <ClInclude Include="..\Shared\header.h" />
+    <ClInclude Include="..\Shared\imguiMesh.h" />
+    <ClInclude Include="..\Shared\imgui\imconfig.h" />
+    <ClInclude Include="..\Shared\imgui\imgui.h" />
+    <ClInclude Include="..\Shared\imgui\imgui_internal.h" />
+    <ClInclude Include="..\Shared\imgui\stb_rect_pack.h" />
+    <ClInclude Include="..\Shared\imgui\stb_textedit.h" />
+    <ClInclude Include="..\Shared\imgui\stb_truetype.h" />
+    <ClInclude Include="..\Shared\Net.h" />
+    <ClInclude Include="..\Shared\OpenGLRenderer.h" />
+    <ClInclude Include="..\Shared\Shader.h" />
+    <ClInclude Include="..\Shared\SystemUI.h" />
+    <ClInclude Include="..\Shared\Texture.h" />
+    <ClInclude Include="..\Shared\Windows.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="stdafx.h" />
@@ -150,6 +168,15 @@
     <ClInclude Include="ThreadRAII.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Shared\Application.cpp" />
+    <ClCompile Include="..\Shared\imguiMesh.cpp" />
+    <ClCompile Include="..\Shared\imgui\imgui.cpp" />
+    <ClCompile Include="..\Shared\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\Shared\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Shared\OpenGLRenderer.cpp" />
+    <ClCompile Include="..\Shared\Shader.cpp" />
+    <ClCompile Include="..\Shared\SystemUI.cpp" />
+    <ClCompile Include="..\Shared\Windows.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Server.cpp" />

@@ -1,6 +1,7 @@
 #pragma once
 
 class Server;
+
 class ThreadRAII
 {
 private:

@@ -5,7 +5,7 @@ public:
 	Server();
 	~Server();
 	bool Init();
-	void Loop();
+	void Update();
 
 	void DisconnectClient(SOCKET client);
 
