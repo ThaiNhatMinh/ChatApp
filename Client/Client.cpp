@@ -72,8 +72,27 @@ bool Client::Init()
 	return 1;
 }
 
+void Client::Update(float dt)
+{
+}
+
 bool Client::Register(const char * username, const char * pass)
 {
+	char data[DEFAULT_BUFLEN];
+
+	Buffer bf(data,DEFAULT_BUFLEN);
+	char type = CMD_REG_USER;
+	bf.WriteChar(&type, 1);
+
+	bf.WriteInt(strlen(username) + 1);
+	bf.WriteChar(username, strlen(username) + 1);
+
+	bf.WriteInt(strlen(pass) + 1);
+	bf.WriteChar(pass, strlen(pass) + 1);
+
+	Send(bf.Get(),bf.GetPos());
+
+
 	return false;
 }
 
@@ -82,10 +101,10 @@ bool Client::Login(const char * username, const char * pass)
 	return false;
 }
 
-bool Client::Send(const char * data)
+bool Client::Send(const char * data,int len)
 {
 	// Send an initial buffer
-	int iResult = send(ConnectSocket, data, (int)strlen(data), 0);
+	int iResult = send(ConnectSocket, data, len, 0);
 	if (iResult == SOCKET_ERROR) {
 		printf("send failed with error: %d\n", WSAGetLastError());
 		closesocket(ConnectSocket);

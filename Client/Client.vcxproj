@@ -72,6 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>E:\University Of Science\MMT\ChatApp\Shared\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -143,13 +144,40 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Shared\Application.h" />
+    <ClInclude Include="..\Shared\Buffer.h" />
+    <ClInclude Include="..\Shared\header.h" />
+    <ClInclude Include="..\Shared\imguiMesh.h" />
+    <ClInclude Include="..\Shared\imgui\imconfig.h" />
+    <ClInclude Include="..\Shared\imgui\imgui.h" />
+    <ClInclude Include="..\Shared\imgui\imgui_internal.h" />
+    <ClInclude Include="..\Shared\imgui\stb_rect_pack.h" />
+    <ClInclude Include="..\Shared\imgui\stb_textedit.h" />
+    <ClInclude Include="..\Shared\imgui\stb_truetype.h" />
     <ClInclude Include="..\Shared\Net.h" />
+    <ClInclude Include="..\Shared\OpenGLRenderer.h" />
+    <ClInclude Include="..\Shared\Shader.h" />
+    <ClInclude Include="..\Shared\SystemUI.h" />
+    <ClInclude Include="..\Shared\Texture.h" />
+    <ClInclude Include="..\Shared\Windows.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="ClientApp.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Shared\Application.cpp" />
+    <ClCompile Include="..\Shared\Buffer.cpp" />
+    <ClCompile Include="..\Shared\imguiMesh.cpp" />
+    <ClCompile Include="..\Shared\imgui\imgui.cpp" />
+    <ClCompile Include="..\Shared\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\Shared\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Shared\OpenGLRenderer.cpp" />
+    <ClCompile Include="..\Shared\Shader.cpp" />
+    <ClCompile Include="..\Shared\SystemUI.cpp" />
+    <ClCompile Include="..\Shared\Windows.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="ClientApp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -157,6 +185,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\Shared\glew32s.lib" />
+    <Library Include="..\Shared\glfw3.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

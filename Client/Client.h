@@ -2,7 +2,7 @@
 
 
 
-class Client
+class Client: public Module
 {
 public:
 	enum Status
@@ -12,11 +12,12 @@ public:
 public:
 	Client()=default;
 	~Client();
-
+	
 	bool Init();
+	void Update(float dt);
 	bool Register(const char* username, const char* pass);
 	bool Login(const char* username, const char* pass);
-	bool Send(const char* data);
+	bool Send(const char* data,int len = DEFAULT_BUFLEN);
 
 private:
 	SOCKET ConnectSocket = INVALID_SOCKET;

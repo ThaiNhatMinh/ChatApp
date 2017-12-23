@@ -7,18 +7,25 @@ class Client
 public:
 	enum Status
 	{
-		S_CONNECTED,
-		S_DISCONNECT,
-		S_UNKNOW,
+		OFFLINE,
+		ONLINE
 
 	};
-	Client(SOCKET );
+	Client(SOCKET ,const char* user,const char* pass);
 	~Client();
 
-	bool Send(const char* data);
 
+	void SetStatus(Client::Status st);
+	Client::Status GetStatus();
+
+	void SetSocket(SOCKET sk);
+	SOCKET GetSocket();
+
+	const std::string& GetUsername();
+	const std::string& GetPassWord();
 private:
 	SOCKET m_Socket;
 	Status m_Status;
+	std::string m_Username, m_Password;
 };
 

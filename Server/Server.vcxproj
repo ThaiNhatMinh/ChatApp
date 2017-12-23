@@ -147,6 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Shared\Application.h" />
+    <ClInclude Include="..\Shared\Buffer.h" />
     <ClInclude Include="..\Shared\header.h" />
     <ClInclude Include="..\Shared\imguiMesh.h" />
     <ClInclude Include="..\Shared\imgui\imconfig.h" />
@@ -170,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Shared\Application.cpp" />
+    <ClCompile Include="..\Shared\Buffer.cpp" />
     <ClCompile Include="..\Shared\imguiMesh.cpp" />
     <ClCompile Include="..\Shared\imgui\imgui.cpp" />
     <ClCompile Include="..\Shared\imgui\imgui_demo.cpp" />
