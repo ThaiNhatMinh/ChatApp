@@ -81,6 +81,9 @@
     <ClInclude Include="..\Shared\imgui\stb_truetype.h">
       <Filter>Shared\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="ServerApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -124,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="..\Shared\imgui\imgui_draw.cpp">
       <Filter>Shared\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerApp.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

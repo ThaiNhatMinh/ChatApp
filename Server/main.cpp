@@ -12,7 +12,7 @@ int __cdecl main(void)
 
 	//ma.Loop();
 
-	Application app;
+	ServerApp app;
 	app.RunMainLoop();
 	return 0;
 }

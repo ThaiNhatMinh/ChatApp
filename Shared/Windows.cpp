@@ -21,18 +21,7 @@ vec2 Windows::ReadConfig()
 	//m_pWindows->InitWindow();
 	//m_pWindows->SetPos(pos);
 }
-WNDPROC g_MainWndProc;
-LRESULT CALLBACK MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	LONG_PTR lpUserData = GetWindowLongPtr(hWnd, GWLP_USERDATA);
-	Windows* pMyObject = (Windows*)lpUserData;
-	pMyObject->PrintMsg("Testtttt");
-	switch (message)
-	{
-	
-	}
-	return CallWindowProc(g_MainWndProc, hWnd, message, wParam, lParam);
-}
+
 
 Windows::Windows()
 {
@@ -67,10 +56,7 @@ Windows::Windows()
 
 	HideWindows();
 
-	HWND hWnd = glfwGetWin32Window(m_pWindow);
-	g_MainWndProc = (WNDPROC)GetWindowLong(hWnd, GWL_WNDPROC);
-	SetWindowLong(hWnd, GWL_WNDPROC, (LONG)MainWndProc);
-	SetWindowLongPtr(hWnd, GWL_USERDATA, (LONG)this);
+	
 	return;
 
 }

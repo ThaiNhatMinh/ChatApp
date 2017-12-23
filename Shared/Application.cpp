@@ -40,6 +40,7 @@ void Application::RunMainLoop()
 
 		RenderUI();
 		
+		if (m_pModule) m_pModule->Update(0);
 
 		ImGui::Render();
 	
@@ -49,7 +50,5 @@ void Application::RunMainLoop()
 
 void Application::RenderUI()
 {
-
 	m_UI->NewFrame();
-	
 }

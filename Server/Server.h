@@ -1,14 +1,16 @@
 #pragma once
-class Server
+class Server: public Module
 {
 public:
 	Server();
 	~Server();
 	bool Init();
-	void Update();
+	void Update(float dt);
 
 	void DisconnectClient(SOCKET client);
-
+	void ProcessEvent(WPARAM wParam, LPARAM lParam);
+	void ProcessCommand(const char* cmd,int len);
+	void SetAsynch(HWND hwnd);
 private:
 	SOCKET GetListenSocket() { return ListenSocket; }
 	void AddClient(SOCKET client);
