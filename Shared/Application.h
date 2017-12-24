@@ -11,7 +11,7 @@ class SystemUI;
 class Module
 {
 public:
-	virtual ~Module() = default;
+	virtual ~Module() {};
 	virtual void Update(float dt) = 0;
 
 };
@@ -21,7 +21,7 @@ public:
 
 	Application();
 	~Application();
-	void RunMainLoop();
+	virtual void RunMainLoop();
 protected:
 	virtual void RenderUI();
 protected:

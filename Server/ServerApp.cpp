@@ -38,4 +38,23 @@ ServerApp::ServerApp()
 
 ServerApp::~ServerApp()
 {
+	printf("DDDD");
+}
+
+void ServerApp::RunMainLoop()
+{
+	while (!m_Window->ShouldClose())
+	{
+		glfwPollEvents();
+
+		//m_Renderer->Clear();
+
+		//RenderUI();
+
+		if (m_pModule) m_pModule->Update(0);
+
+		//ImGui::Render();
+
+		//m_Renderer->SwapBuffer();
+	}
 }

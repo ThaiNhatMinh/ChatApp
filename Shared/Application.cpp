@@ -26,7 +26,7 @@ Application::~Application()
 
 void Application::RunMainLoop()
 {
-	m_Window->ShowWindows();
+	
 
 	bool show_test_window = true;
 	bool show_another_window = false;

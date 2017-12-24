@@ -68,7 +68,7 @@ bool Client::Init()
 		WSACleanup();
 		return 0;
 	}
-
+	
 	return 1;
 }
 
@@ -115,4 +115,17 @@ bool Client::Send(const char * data,int len)
 	printf("Bytes Sent: %ld\n", iResult);
 
 	return 1;
+}
+Client::Status Client::GetStatus()
+{
+	return m_Status;
+}
+
+void Client::SetAsynch(HWND hwnd)
+{
+	WSAAsyncSelect(ConnectSocket, hwnd, WM_SOCKET,  FD_READ | FD_CLOSE);
+}
+void Client::SetStatus(Client::Status s)
+{
+	m_Status = s;
 }

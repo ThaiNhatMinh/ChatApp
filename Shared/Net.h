@@ -1,5 +1,7 @@
 #pragma once
 
+#define WM_SOCKET WM_USER+1
+
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27015"
 #define MAX_USERNAME_LEN 64
