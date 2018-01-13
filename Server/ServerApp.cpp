@@ -17,7 +17,8 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 
 ServerApp::ServerApp()
 {
-	Server* p = new Server();
+	Socket::InitWinShock();
+	Server* p = new Server(m_Logger);
 	if (!p->Init())
 	{
 		printf("Cannot init server.");
@@ -43,18 +44,26 @@ ServerApp::~ServerApp()
 
 void ServerApp::RunMainLoop()
 {
+	m_Window->ShowWindows();
 	while (!m_Window->ShouldClose())
 	{
 		glfwPollEvents();
 
-		//m_Renderer->Clear();
+		m_Renderer->Clear();
 
-		//RenderUI();
-
+		RenderUI();
+		//Sleep(1000);
 		if (m_pModule) m_pModule->Update(0);
 
-		//ImGui::Render();
+		ImGui::Render();
 
-		//m_Renderer->SwapBuffer();
+		m_Renderer->SwapBuffer();
 	}
+}
+
+void ServerApp::RenderUI()
+{
+	m_UI->NewFrame();
+
+	m_Logger.Draw("Server Log");
 }

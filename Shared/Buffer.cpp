@@ -2,8 +2,18 @@
 #include "Buffer.h"
 #include <string.h>
 
-Buffer::Buffer(char * data,int len) :m_pPointer(data), pos(0),len(len)
+
+Buffer::Buffer(int len) :m_pPointer(new char[len]), pos(0), len(len), canDelete(1)
 {
+}
+
+Buffer::Buffer(char * p, int len):m_pPointer(p),len(len), canDelete(0)
+{
+}
+
+Buffer::~Buffer()
+{
+	if(canDelete) delete[] m_pPointer;
 }
 
 void Buffer::IncPos(int offset)
@@ -46,6 +56,14 @@ bool Buffer::WriteChar(const char * p, int size)
 	if (pos >= len) return false;
 	memcpy(&m_pPointer[pos], p, size);
 	pos += size;
+	return true;
+}
+
+bool Buffer::WriteChar(char c)
+{
+	if (pos >= len) return false;
+	m_pPointer[pos] = c;
+	pos++;
 	return true;
 }
 

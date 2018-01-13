@@ -7,9 +7,11 @@ private:
 	int pos;
 	int len;
 	char* m_pPointer;
+	bool canDelete;
 public:
-	Buffer(char* data,int len);
-	~Buffer() = default;
+	Buffer(int len = MAX_BUFFER_LEN);
+	Buffer(char* p, int len);
+	~Buffer();
 
 	void			IncPos(int offset);
 	void			DecPos(int offset);
@@ -19,6 +21,7 @@ public:
 	float			ReadFloat();
 
 	bool			WriteChar(const char* p,int size);
+	bool			WriteChar(char c);
 	bool			WriteInt(int p);
 	bool			WriteFloat(float p);
 

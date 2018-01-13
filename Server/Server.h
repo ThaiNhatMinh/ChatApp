@@ -2,7 +2,7 @@
 class Server: public Module
 {
 public:
-	Server();
+	Server(Log& l);
 	~Server();
 	bool Init();
 	void Update(float dt);
@@ -17,7 +17,7 @@ private:
 	void LoadUser();
 	void WriteUser();
 
-	SOCKET	GetListenSocket() { return ListenSocket; }
+	SOCKET	GetListenSocket() { return m_SVSocket.Get(); }
 	
 	// Check if username exist
 	// True if exits
@@ -26,18 +26,18 @@ private:
 	// Find a user on server with socket/username
 	// Return -1 if not found
 	int		FindClient(SOCKET sk);
-	int		FindClient(const char* username);
+	int		FindClient(const char* username,const char* password=nullptr);
 
 	// Send a message to Client/Socket
-	bool	SendClient(Client*,Command, const char* text);
-	bool	SendClient(SOCKET sk, Command, const char* text);
+	bool	SendClient(Client*, const char * buffer, int len);
+	bool	SendClient(SOCKET sk, const char* buffer,int len);
 
 private:
-	WSADATA wsaData;
-	SOCKET ListenSocket = INVALID_SOCKET;
-
+	Log& Logger;
+	SVSocket m_SVSocket;
 	std::vector<std::unique_ptr<Client>> m_Clients;
-	std::vector<SOCKET> m_Connecting;
-	std::unique_ptr<ThreadRAII> m_AddClientThread;
+	
+	// Current connecting to server
+	std::vector<Socket> m_Connecting;
 };
 

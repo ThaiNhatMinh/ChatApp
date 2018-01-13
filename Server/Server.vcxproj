@@ -90,11 +90,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -156,9 +156,11 @@
     <ClInclude Include="..\Shared\imgui\stb_rect_pack.h" />
     <ClInclude Include="..\Shared\imgui\stb_textedit.h" />
     <ClInclude Include="..\Shared\imgui\stb_truetype.h" />
+    <ClInclude Include="..\Shared\Log.h" />
     <ClInclude Include="..\Shared\Net.h" />
     <ClInclude Include="..\Shared\OpenGLRenderer.h" />
     <ClInclude Include="..\Shared\Shader.h" />
+    <ClInclude Include="..\Shared\Socket.h" />
     <ClInclude Include="..\Shared\SystemUI.h" />
     <ClInclude Include="..\Shared\Texture.h" />
     <ClInclude Include="..\Shared\Windows.h" />
@@ -166,6 +168,7 @@
     <ClInclude Include="Server.h" />
     <ClInclude Include="ServerApp.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SVSocket.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ThreadRAII.h" />
   </ItemGroup>
@@ -178,6 +181,7 @@
     <ClCompile Include="..\Shared\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\Shared\OpenGLRenderer.cpp" />
     <ClCompile Include="..\Shared\Shader.cpp" />
+    <ClCompile Include="..\Shared\Socket.cpp" />
     <ClCompile Include="..\Shared\SystemUI.cpp" />
     <ClCompile Include="..\Shared\Windows.cpp" />
     <ClCompile Include="Client.cpp" />
@@ -190,6 +194,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SVSocket.cpp" />
     <ClCompile Include="ThreadRAII.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

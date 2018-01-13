@@ -27,9 +27,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shared\Net.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -81,6 +78,18 @@
     <ClInclude Include="ClientApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Shared\Socket.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="CLSocket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\Net.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -123,6 +132,12 @@
       <Filter>Shared\ImGUi</Filter>
     </ClCompile>
     <ClCompile Include="ClientApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\Socket.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="CLSocket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

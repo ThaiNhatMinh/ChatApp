@@ -76,7 +76,7 @@ void SystemUI::NewFrame()
 	// Setup time step
 	double current_time = glfwGetTime();
 	io.DeltaTime = m_Time > 0.0 ? (float)(current_time - m_Time) : (float)(1.0f / 60.0f);
-	m_Time = current_time;
+	m_Time = (float)current_time;
 
 	if (glfwGetWindowAttrib(this->w, GLFW_FOCUSED))
 	{

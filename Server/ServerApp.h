@@ -9,6 +9,9 @@ public:
 	~ServerApp();
 	
 	virtual void RunMainLoop();
+	virtual void RenderUI();
 
+private:
+	Log m_Logger;
 };
 

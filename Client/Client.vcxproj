@@ -157,11 +157,14 @@
     <ClInclude Include="..\Shared\Net.h" />
     <ClInclude Include="..\Shared\OpenGLRenderer.h" />
     <ClInclude Include="..\Shared\Shader.h" />
+    <ClInclude Include="..\Shared\Socket.h" />
     <ClInclude Include="..\Shared\SystemUI.h" />
     <ClInclude Include="..\Shared\Texture.h" />
     <ClInclude Include="..\Shared\Windows.h" />
+    <ClInclude Include="ChatDialog.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ClientApp.h" />
+    <ClInclude Include="CLSocket.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -174,10 +177,12 @@
     <ClCompile Include="..\Shared\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\Shared\OpenGLRenderer.cpp" />
     <ClCompile Include="..\Shared\Shader.cpp" />
+    <ClCompile Include="..\Shared\Socket.cpp" />
     <ClCompile Include="..\Shared\SystemUI.cpp" />
     <ClCompile Include="..\Shared\Windows.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ClientApp.cpp" />
+    <ClCompile Include="CLSocket.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

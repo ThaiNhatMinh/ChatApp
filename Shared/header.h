@@ -1,5 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include <Windows.h>
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <stdio.h>
 #include <memory>
 // OpenGL Include
 // GLEW
@@ -54,3 +57,5 @@ using glm::quat;
 #include "Windows.h"
 #include "Application.h"
 #include "Buffer.h"
+#include "Socket.h"
+#include "Log.h"

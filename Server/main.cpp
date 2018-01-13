@@ -1,7 +1,12 @@
 #include "stdafx.h"
 #include "Server.h"
 
-int __cdecl main(void)
+int WinMain(
+	 HINSTANCE hInstance,
+	 HINSTANCE hPrevInstance,
+	 LPSTR     lpCmdLine,
+	 int       nCmdShow
+)
 {
 
 	ServerApp app;

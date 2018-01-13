@@ -17,18 +17,18 @@ public:
 	Client()=default;
 	~Client();
 	
-	bool Init();
+	
 	void Update(float dt);
-	bool Register(const char* username, const char* pass);
-	bool Login(const char* username, const char* pass);
-	bool Send(const char* data,int len = DEFAULT_BUFLEN);
 	Client::Status GetStatus();
 	void SetStatus(Client::Status);
-	void SetAsynch(HWND hwnd);
 	
-
+	std::string& GetUsername() {
+		return username;	}
+	std::string& GetPassword() {
+		return username;
+	}
 private:
-	SOCKET ConnectSocket = INVALID_SOCKET;
-	WSADATA wsaData;
+	std::string username;
+	std::string password;
 	Status m_Status;
 };
