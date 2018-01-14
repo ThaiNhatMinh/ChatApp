@@ -30,11 +30,15 @@ enum Command
 	*/
 	CMD_LOGIN_USER,		// command login user
 
-	/* format messenger
+	/*	Command register group chat
+		Format messenger
 		char:		cmd code
-	
+		int:		group name length
+		char[]:		group name
+		int:		admin name length
+		char[]:		admin name
 	*/
-	CMD_REG_GROUP,		// command register group chat
+	CMD_REG_GROUP,		
 
 	/* command to send a messenger to user
 		Format messenger
@@ -44,12 +48,47 @@ enum Command
 		int:		messenge length
 		char[]:		text message
 	*/
-	CMD_SEND_USER,		
+	CMD_SEND_USER,
 
-	CMD_SEND_GROUP,		// command to send a messenger to group
+	/* command to add a user to a group
+		Format messenger
+		char:		cmd code
+		int:		username length (to/from)
+		char[]:		username (to/from)
+		int:		group name length
+		char[]:		text name
+	*/
+	CMD_ADD_USER,
+
+	/* command to send a messenger to group
+		Format messenger
+		char:		cmd code
+		int:		group name length (to/from)
+		char[]:		group name (to/from)
+		int:		username length (to/from)
+		char[]:		username (to/from)
+		int:		messenge length
+		char[]:		text message
+	*/
+	CMD_SEND_GROUP,
+
+	/* command send to get group info
+		Format messenger
+		char:		cmd code
+		int:		group name length (to/from)
+		char[]:		group name (to/from)
+		int:		user name length (to/from)
+		char[]:		user name (to/from)
+		// Result format. Not include username request
+		int:		group name length (to/from)
+		char[]:		group name (to/from)
+		int:		num user
+		int:		user name length (to/from)
+		char[]:		user name (to/from)
+	*/
+	CMD_GET_GRINFO,
+
 	CMD_SEND_FILES,		// command to send a file to user
-
-	CMD_RECV,			// command to get a messenger
 
 	/* format messenger
 		char:		cmd code
@@ -69,5 +108,6 @@ enum Status
 	SEND_TEXT,
 	SEND_FILE,
 	REG_USER,
-	REG_GROUP
+	REG_GROUP,
+	ADD_USER
 };

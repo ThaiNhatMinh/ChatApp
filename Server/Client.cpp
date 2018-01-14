@@ -10,13 +10,13 @@ Client::Client(SOCKET sk, const char* user, const char* pass):m_Socket(sk),m_Use
 Client::~Client()
 {
 	// shutdown the connection since we're done
-	int iResult = shutdown(m_Socket, SD_SEND);
-
-	if (iResult == SOCKET_ERROR) {
+	//int iResult = shutdown(m_Socket, SD_SEND);
+	
+	if (m_Socket.Shutdown() == SOCKET_ERROR) {
 		printf("%s shutdown failed with error: %d\n",m_Username.c_str(), WSAGetLastError());
 	}
 
-	closesocket(m_Socket);
+	m_Socket.Close();
 }
 
 void Client::SetStatus(Client::Status st)
@@ -34,7 +34,7 @@ void Client::SetSocket(SOCKET sk)
 	m_Socket = sk;
 }
 
-SOCKET Client::GetSocket()
+Socket& Client::GetSocket()
 {
 	return m_Socket;
 }

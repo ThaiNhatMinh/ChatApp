@@ -113,6 +113,7 @@ void ClientApp::ProcessCommand(char * cmd, int len, SOCKET sk)
 		{
 			m_ChatList.push_back(std::make_unique<ChatDiaglog>(username,pClient, m_CLSocket));
 			m_ChatList.front()->AddMessenger(username, text);
+			m_ChatList.front()->AddUser(username);
 
 		}
 		else
@@ -126,11 +127,72 @@ void ClientApp::ProcessCommand(char * cmd, int len, SOCKET sk)
 		break;
 	}
 	case CMD_SEND_GROUP:
+	{
+		char grname[MAX_USERNAME_LEN]; int grlen;
+		char msg[MAX_BUFFER_LEN]; int msglen;
+		char username[MAX_USERNAME_LEN]; int unlen;
+
+		grlen = bf.ReadInt();
+		memcpy(grname, bf.ReadChar(), grlen);
+		bf.IncPos(grlen);
+
+		unlen = bf.ReadInt();
+		memcpy(username, bf.ReadChar(), unlen);
+		bf.IncPos(unlen);
+
+		msglen = bf.ReadInt();
+		memcpy(msg, bf.ReadChar(), msglen);
+		bf.IncPos(msglen);
+
+		int ID = FindGroupChat(grname);
+		if (ID != -1)
+		{
+			m_GroupList[ID]->AddMessenger(username, msg);
+		}
+		else
+		{
+			m_GroupList.push_back(std::make_unique<GroupChat>(grname, pClient, m_CLSocket));
+			m_GroupList.front()->AddMessenger(username, msg);
+			m_GroupList.front()->AddUser(username);
+
+			Buffer rqbf(MAX_BUFFER_LEN);
+			rqbf.WriteChar(CMD_GET_GRINFO);
+			rqbf.WriteInt(grlen);
+			rqbf.WriteChar(grname, grlen);
+			printf("[DEBUG] %s %d\n", grname, grlen);
+			rqbf.WriteInt(pClient->GetUsername().size()+1);
+			rqbf.WriteChar(pClient->GetUsername().c_str(), pClient->GetUsername().size() + 1);
+
+			m_CLSocket.Send(rqbf.Get(), rqbf.GetPos());
+
+		}
 		break;
+	}
+	case CMD_GET_GRINFO:
+	{
+		char username[MAX_USERNAME_LEN]; int unlen;
+		char grname[MAX_USERNAME_LEN]; int grlen;
+
+		grlen = bf.ReadInt();
+		memcpy(grname, bf.ReadChar(), grlen);
+		bf.IncPos(grlen);
+
+		int ID = FindGroupChat(grname);
+		if (ID == -1) break;
+
+		int num = bf.ReadInt();
+		for (int i = 0; i < num; i++)
+		{
+			unlen = bf.ReadInt();
+			memcpy(username, bf.ReadChar(), unlen);
+			bf.IncPos(unlen);
+			m_GroupList[ID]->AddUser(username);
+		}
+		break;
+	}
 	case CMD_SEND_FILES:
 		break;
-	case CMD_RECV:
-		break;
+	
 	case CMD_STATUS:
 	{
 		Status s = (Status)*bf.ReadChar();
@@ -169,8 +231,46 @@ void ClientApp::ProcessCommand(char * cmd, int len, SOCKET sk)
 			else printf("Error: Messenger coprrupt.\n");
 			break;
 		}
-		case REG_GROUP:
+		case ADD_USER:
+		{
+			char result = *bf.ReadChar();
+			bf.IncPos(1);
+			char grname[MAX_USERNAME_LEN]; int len;
+			len = bf.ReadInt();
+			memcpy(grname, bf.ReadChar(), len);
+			bf.IncPos(len);
+			int ID = FindGroupChat(grname);
+			if (ID != -1)
+			{
+				m_GroupList[ID]->Status(result);
+			}
+			else
+			{
+				printf("Error: Invaid group name %s\n", grname);
+			}
 			break;
+		}
+		case REG_GROUP:
+		{
+			char result = *bf.ReadChar();
+			bf.IncPos(1);
+			char grname[MAX_USERNAME_LEN]; int len;
+			len = bf.ReadInt();
+			memcpy(grname, bf.ReadChar(), len);
+
+			if (result == 0)
+			{
+				pClient->SetStatus(Client::REGISTER_GR_FAIL);
+
+			}
+			else if (result == 1)
+			{
+				pClient->SetStatus(Client::REGISTER_GR_SUCCESS);
+				m_GroupList.push_back(std::make_unique<GroupChat>(grname, pClient, m_CLSocket));
+				m_GroupList.front()->AddUser(pClient->GetUsername());
+			}
+			break;
+		}
 		default:
 			break;
 		}
@@ -241,6 +341,7 @@ void ClientApp::RenderUI()
 			pClient->SetStatus(Client::NONE);
 		}
 
+
 		ImGui::End();
 	}
 
@@ -298,29 +399,89 @@ void ClientApp::RenderUI()
 
 	if (ShowChat)
 	{
-		ImGui::Begin("Demo");
+		ImGui::Begin("Demo",nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 		{
 			if (ImGui::Button("Send Messenger")) ImGui::OpenPopup("Input Username");
-			if (ImGui::BeginPopupModal("Input Username"))
+			if (ImGui::BeginPopupModal("Input Username",nullptr, ImGuiWindowFlags_NoResize))
 			{
 				static char un[MAX_USERNAME_LEN];
 				if (ImGui::InputText("UserName", un, MAX_USERNAME_LEN, ImGuiInputTextFlags_EnterReturnsTrue))
 				{
 					m_ChatList.push_back(std::make_unique<ChatDiaglog>(un, pClient,m_CLSocket));
+					m_ChatList.front()->AddUser(un);
 					ImGui::CloseCurrentPopup();
 				}
 				if (ImGui::Button("OK", ImVec2(120, 0))) 
 				{
 					if(strlen(un)) m_ChatList.push_back(std::make_unique<ChatDiaglog>(un, pClient, m_CLSocket));
+					m_ChatList.front()->AddUser(un);
 					ImGui::CloseCurrentPopup(); 
 				}
 				ImGui::EndPopup();
+			}
+
+
+			// Create group
+			{
+				if (ImGui::Button("Create Group")) ImGui::OpenPopup("CreateGroup");
+				if (ImGui::BeginPopupModal("CreateGroup", nullptr, ImGuiWindowFlags_NoResize))
+			{
+				static char un[MAX_USERNAME_LEN];
+				if (ImGui::InputText("Name", un, MAX_USERNAME_LEN, ImGuiInputTextFlags_EnterReturnsTrue))
+				{
+					// Request create group
+					Buffer bf(MAX_BUFFER_LEN);
+					bf.WriteChar(CMD_REG_GROUP);
+					bf.WriteInt(strlen(un) + 1);
+					bf.WriteChar(un, strlen(un) + 1);
+					bf.WriteInt(pClient->GetUsername().size() + 1);
+					bf.WriteChar(pClient->GetUsername().c_str(), pClient->GetUsername().size() + 1);
+
+					m_CLSocket.Send(bf.Get(), bf.GetPos());
+
+					ImGui::CloseCurrentPopup();
+				}
+				if (ImGui::Button("OK", ImVec2(120, 0)) && strlen(un))
+				{
+					// Request create group
+					Buffer bf(MAX_BUFFER_LEN);
+					bf.WriteChar(CMD_REG_GROUP);
+					bf.WriteInt(strlen(un) + 1);
+					bf.WriteChar(un, strlen(un) + 1);
+					bf.WriteInt(pClient->GetUsername().size() + 1);
+					bf.WriteChar(pClient->GetUsername().c_str(), pClient->GetUsername().size() + 1);
+
+					m_CLSocket.Send(bf.Get(), bf.GetPos());
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel", ImVec2(120, 0))) ImGui::CloseCurrentPopup();
+
+				ImGui::EndPopup();
+			}
+
+				if (pClient->GetStatus() == Client::REGISTER_GR_FAIL) ImGui::OpenPopup("CreateGroupF");
+				else if (pClient->GetStatus() == Client::REGISTER_GR_SUCCESS)
+				{
+					pClient->SetStatus(Client::NONE);
+				}
+				if (ImGui::BeginPopupModal("CreateGroupF", nullptr, ImGuiWindowFlags_NoResize))
+				{
+					ImGui::Text("Create Group Fail!");
+					if (ImGui::Button("OK", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+					ImGui::EndPopup();
+					pClient->SetStatus(Client::NONE);
+				}
 			}
 		}
 		ImGui::End();
 
 
 		for (auto& el : m_ChatList)
+		{
+			el->Draw();
+		}
+		for (auto& el : m_GroupList)
 		{
 			el->Draw();
 		}
@@ -336,4 +497,30 @@ int ClientApp::FindChatDiaglog(const char * un)
 		i++;
 	}
 	return -1;
+}
+
+int ClientApp::FindGroupChat(const char * un)
+{
+	int i = 0;
+	for (auto& el : m_GroupList)
+	{
+		if (el->GetName() == un) return i;
+		i++;
+	}
+	return -1;
+}
+
+bool ClientApp::SendFile(const char * filename)
+{
+	FILE* pFile = fopen(filename, "rb");
+	if (!pFile) return false;
+	fseek(pFile, 0, SEEK_END);
+	auto size = ftell(pFile);
+	fseek(pFIle, 0, SEEK_SET);
+
+	char* data = new char[size];
+	fread(data, size, 1, pFile);
+	fclose(pFile);
+
+
 }

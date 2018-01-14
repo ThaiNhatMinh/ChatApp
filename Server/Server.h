@@ -27,7 +27,7 @@ private:
 	// Return -1 if not found
 	int		FindClient(SOCKET sk);
 	int		FindClient(const char* username,const char* password=nullptr);
-
+	int		FindGroup(const char* name);
 	// Send a message to Client/Socket
 	bool	SendClient(Client*, const char * buffer, int len);
 	bool	SendClient(SOCKET sk, const char* buffer,int len);
@@ -36,7 +36,7 @@ private:
 	Log& Logger;
 	SVSocket m_SVSocket;
 	std::vector<std::unique_ptr<Client>> m_Clients;
-	
+	std::vector<std::unique_ptr<GroupChatSV>> m_Groups;
 	// Current connecting to server
 	std::vector<Socket> m_Connecting;
 };

@@ -19,12 +19,12 @@ public:
 	Client::Status GetStatus();
 
 	void SetSocket(SOCKET sk);
-	SOCKET GetSocket();
+	Socket& GetSocket();
 
 	const std::string& GetUsername();
 	const std::string& GetPassWord();
 private:
-	SOCKET m_Socket;
+	Socket m_Socket;
 	Status m_Status;
 	std::string m_Username, m_Password;
 };

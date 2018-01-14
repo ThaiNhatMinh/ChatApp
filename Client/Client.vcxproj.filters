@@ -90,6 +90,9 @@
     <ClInclude Include="ChatDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GroupChat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -138,6 +141,12 @@
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="CLSocket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GroupChat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
