@@ -28,18 +28,18 @@ ServerApp::ServerApp()
 
 	m_pModule = std::unique_ptr<Server>(p);
 
-	HWND hWnd = m_Window->GetHandle();
-	p->SetAsynch(hWnd);
-	g_MainWndProc = (WNDPROC)GetWindowLong(hWnd, GWL_WNDPROC);
-	SetWindowLong(hWnd, GWL_WNDPROC, (LONG)MainWndProc);
-	SetWindowLongPtr(hWnd, GWL_USERDATA, (LONG)p);
+	//HWND hWnd = m_Window->GetHandle();
+	//p->SetAsynch(hWnd);
+	//g_MainWndProc = (WNDPROC)GetWindowLong(hWnd, GWL_WNDPROC);
+	//SetWindowLong(hWnd, GWL_WNDPROC, (LONG)MainWndProc);
+	//SetWindowLongPtr(hWnd, GWL_USERDATA, (LONG)p);
 	
 }
 
 
 ServerApp::~ServerApp()
 {
-	printf("DDDD");
+
 }
 
 void ServerApp::RunMainLoop()
@@ -66,4 +66,5 @@ void ServerApp::RenderUI()
 	m_UI->NewFrame();
 
 	m_Logger.Draw("Server Log");
+	
 }

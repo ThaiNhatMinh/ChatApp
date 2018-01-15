@@ -88,7 +88,25 @@ enum Command
 	*/
 	CMD_GET_GRINFO,
 
-	CMD_SEND_FILES,		// command to send a file to user
+	/* Command to send a file to user
+		Format messenger
+		char:		cmd code
+		char:		send type 0-user, 1-group
+		int:		user/group name length (to)
+		char[]:		user/group name (to)
+		int:		username length (from)
+		char[]:		username (from)
+		int:		filename length 
+		char[]:		filename
+		long:		file size
+		// To client format
+		char:		cmd code
+		int:		filename length
+		char[]:		filename
+		long:		file size
+	
+	*/
+	CMD_SEND_FILE,		
 
 	/* format messenger
 		char:		cmd code
@@ -110,4 +128,12 @@ enum Status
 	REG_USER,
 	REG_GROUP,
 	ADD_USER
+};
+
+struct FileSendInfo
+{
+	std::string FileName;
+	char* pData;
+	long size;
+	long current;
 };

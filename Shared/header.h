@@ -59,3 +59,4 @@ using glm::quat;
 #include "Buffer.h"
 #include "Socket.h"
 #include "Log.h"
+#include "ThreadRAII.h"

@@ -32,16 +32,16 @@ bool Socket::ShutdownWinSock()
 	return false;
 }
 
-bool Socket::Send(const char * buffer, int len)
+int Socket::Send(const char * buffer, long len)
 {
 	int iResult = send(m_Socket, buffer, len, 0);
 
 	if (iResult == SOCKET_ERROR) {
 		printf("send failed with error: %d\n", WSAGetLastError());
-		return 0;
+		return SOCKET_ERROR;
 	}
 
-	return 1;
+	return iResult;
 }
 
 int Socket::Recv(char * buffer, int len)
@@ -63,3 +63,4 @@ int Socket::Shutdown()
 {
 	return shutdown(m_Socket, SD_SEND);
 }
+

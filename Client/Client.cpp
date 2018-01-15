@@ -10,6 +10,7 @@ Client::~Client()
 
 void Client::Update(float dt)
 {
+
 }
 
 Client::Status Client::GetStatus()

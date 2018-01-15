@@ -1,4 +1,21 @@
 #pragma once
+
+struct SVFileSendInfo :public FileSendInfo
+{
+	char type;
+	std::string name;
+	std::string From;
+};
+
+struct Connection {
+	Socket sd;
+	char acBuffer[MAX_BUFFER_LEN];
+	int nCharsInBuffer;
+
+	Connection(SOCKET sd_) : sd(sd_), nCharsInBuffer(0) { }
+};
+typedef std::vector<Connection> ConnectionList;
+
 class Server: public Module
 {
 public:
@@ -12,7 +29,10 @@ public:
 	void ProcessCommand(char* cmd,int len, SOCKET sk);
 	void SetAsynch(HWND hwnd);
 private:
-
+	bool ReadData(Connection& conn);
+	bool WriteData(Connection& conn);
+	void TestSendFile(std::string file, Client*);
+	void Send2ND(Client*);
 	// Read/Write user data
 	void LoadUser();
 	void WriteUser();
@@ -32,12 +52,17 @@ private:
 	bool	SendClient(Client*, const char * buffer, int len);
 	bool	SendClient(SOCKET sk, const char* buffer,int len);
 
+	bool	SendFile(Client* cl);
+
 private:
 	Log& Logger;
 	SVSocket m_SVSocket;
 	std::vector<std::unique_ptr<Client>> m_Clients;
 	std::vector<std::unique_ptr<GroupChatSV>> m_Groups;
 	// Current connecting to server
-	std::vector<Socket> m_Connecting;
+	std::vector<Connection> m_Connecting;
+	// check file sending -1 for none, 0 for sending, 1 for finish
+	int FileSending;
+	SVFileSendInfo m_File;
 };
 

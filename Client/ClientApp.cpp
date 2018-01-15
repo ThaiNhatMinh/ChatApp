@@ -10,46 +10,14 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 
 	if (message == WM_SOCKET)
 	{
-		static int iResult;
-		static char recvbuf[MAX_BUFFER_LEN];
-		static int recvbuflen = MAX_BUFFER_LEN;
-		if (WSAGETSELECTERROR(lParam))
-		{
-			printf("ClientApp::ProcessEvent() Accept failed with error: %d\n", WSAGetLastError());
-			closesocket(wParam);
-			return CallWindowProc(g_MainWndProc, hWnd, message, wParam, lParam);
-		}
-		switch (WSAGETSELECTEVENT(lParam))
-		{
-		case FD_READ:
-		{
-			iResult = recv(wParam, recvbuf, recvbuflen, 0);
-			if (iResult > 0) {
-				pMyObject->ProcessCommand(recvbuf, iResult, wParam);
-				printf("Reive from %d. Num byte: %d\n", wParam, iResult);
-			}
-			else if (iResult == 0)
-			{
-				printf("Server disconnect.\n");
-				//DisconnectClient(m_Clients[i]);
-			}
-			else {
-				printf("recv failed with error: %d\n", WSAGetLastError());
-			}
-			break;
-		}
-		case FD_CLOSE:
-		{
-			printf("Server disconnect.\n");
-			break;
-		}
-		}
+		pMyObject->ProcessEvent(wParam, lParam);
+		
 	}
 
 	return CallWindowProc(g_MainWndProc, hWnd, message, wParam, lParam);
 }
 
-ClientApp::ClientApp():ShowLogin(1),ShowRegister(0),ShowChat(0)
+ClientApp::ClientApp():ShowLogin(1),ShowRegister(0),ShowChat(0),FileSending(-1)
 {
 	Socket::InitWinShock();
 
@@ -58,19 +26,22 @@ ClientApp::ClientApp():ShowLogin(1),ShowRegister(0),ShowChat(0)
 	
 	if (m_CLSocket.Connect("127.0.0.1") == false)
 	{
-		MessageBox(NULL, L"Cannot connect to server.", L"Error", 0);
+		MessageBox(NULL, "Cannot connect to server.", "Error", 0);
 		exit(0);
 	}
 	
 
 	m_pModule = std::unique_ptr<Client>(pClient);
 
-	HWND hWnd = m_Window->GetHandle();
-	WSAAsyncSelect(m_CLSocket.Get(), hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
-	g_MainWndProc = (WNDPROC)GetWindowLong(hWnd, GWL_WNDPROC);
-	SetWindowLong(hWnd, GWL_WNDPROC, (LONG)MainWndProc);
-	SetWindowLongPtr(hWnd, GWL_USERDATA, (LONG)this);
+	//HWND hWnd = m_Window->GetHandle();
+	//WSAAsyncSelect(m_CLSocket.Get(), hWnd, WM_SOCKET, FD_READ | FD_CLOSE);
+	//g_MainWndProc = (WNDPROC)GetWindowLong(hWnd, GWL_WNDPROC);
+	//SetWindowLong(hWnd, GWL_WNDPROC, (LONG)MainWndProc);
+	//SetWindowLongPtr(hWnd, GWL_USERDATA, (LONG)this);
 	m_Window->ShowWindows();
+
+
+	
 
 }
 
@@ -85,6 +56,85 @@ ClientApp::~ClientApp()
 	m_CLSocket.Close();
 
 	Socket::ShutdownWinSock();
+}
+
+void ClientApp::ProcessEvent(WPARAM wParam, LPARAM lParam)
+{
+	static int iResult;
+	static char recvbuf[MAX_BUFFER_LEN];
+	static int recvbuflen = MAX_BUFFER_LEN;
+	if (WSAGETSELECTERROR(lParam))
+	{
+		printf("ClientApp::ProcessEvent() Accept failed with error: %d\n", WSAGetLastError());
+		closesocket(wParam);
+		exit(0);
+		//return CallWindowProc(g_MainWndProc, hWnd, message, wParam, lParam);
+	}
+	switch (WSAGETSELECTEVENT(lParam))
+	{
+	case FD_READ:
+	{
+		if (FileSending == -1)
+		{
+			iResult = recv(wParam, recvbuf, recvbuflen, 0);
+			if (iResult > 0) {
+				printf("Reive from %d. Num byte: %d\n", wParam, iResult);
+				ProcessCommand(recvbuf, iResult, wParam);
+			}
+			else if (iResult == 0)
+			{
+				printf("Server disconnect.\n");
+				//DisconnectClient(m_Clients[i]);
+			}
+			else {
+				printf("recv failed with error: %d\n", WSAGetLastError());
+			}
+		}
+		else if (FileSending == 0)
+		{
+			while (m_File.current < m_File.size)
+			{
+				iResult = recv(wParam, &m_File.pData[m_File.current], m_File.size , 0);
+				
+				if (iResult == SOCKET_ERROR)
+				{
+					if (WSAGetLastError() == WSAEWOULDBLOCK)
+					{
+						printf("WSAEWOULDBLOCK\n");
+
+						return;
+					}
+					printf("Read data error code: %d\n",WSAGetLastError());
+					break;
+				}
+				else
+				{
+					m_File.current += iResult;
+				}
+				
+			}
+
+			if (m_File.current == m_File.size)
+			{
+				printf("[File] Finish recv");
+				pClient->SetStatus(Client::SAVE_FILE);
+				FileSending = -1;
+
+			}
+			else if (m_File.current >= m_File.size)
+			{
+				printf("[File] Error File size: %d|Current: %d", m_File.size, m_File.current);
+				FileSending = -1;
+			}
+		}
+		break;
+	}
+	case FD_CLOSE:
+	{
+		printf("Server disconnect.\n");
+		break;
+	}
+	}
 }
 
 void ClientApp::ProcessCommand(char * cmd, int len, SOCKET sk)
@@ -114,6 +164,7 @@ void ClientApp::ProcessCommand(char * cmd, int len, SOCKET sk)
 			m_ChatList.push_back(std::make_unique<ChatDiaglog>(username,pClient, m_CLSocket));
 			m_ChatList.front()->AddMessenger(username, text);
 			m_ChatList.front()->AddUser(username);
+			m_ChatList.front()->SetHandle(m_Window->GetHandle());
 
 		}
 		else
@@ -190,9 +241,27 @@ void ClientApp::ProcessCommand(char * cmd, int len, SOCKET sk)
 		}
 		break;
 	}
-	case CMD_SEND_FILES:
+	case CMD_SEND_FILE:
+	{
+		char filename[MAX_BUFFER_LEN]; int fnlen;
+
+		fnlen = bf.ReadInt();
+		memcpy(filename, bf.ReadChar(), fnlen);
+		bf.IncPos(fnlen);
+
+		long filesize = 0;
+		memcpy(&filesize, bf.ReadChar(), sizeof(long));
+		bf.IncPos(sizeof(long));
+		assert(filesize > 0);
+		m_File.FileName = filename;
+		m_File.size = filesize;
+		m_File.current = 0;
+		m_File.pData = new char[filesize];
+		printf("[File] %s | %d\n", filename, filesize);
+
+		FileSending = 0;
 		break;
-	
+	}
 	case CMD_STATUS:
 	{
 		Status s = (Status)*bf.ReadChar();
@@ -401,7 +470,7 @@ void ClientApp::RenderUI()
 	{
 		ImGui::Begin("Demo",nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 		{
-			if (ImGui::Button("Send Messenger")) ImGui::OpenPopup("Input Username");
+			if (ImGui::Button("Send Messenger", ImVec2(120, 0))) ImGui::OpenPopup("Input Username");
 			if (ImGui::BeginPopupModal("Input Username",nullptr, ImGuiWindowFlags_NoResize))
 			{
 				static char un[MAX_USERNAME_LEN];
@@ -409,21 +478,25 @@ void ClientApp::RenderUI()
 				{
 					m_ChatList.push_back(std::make_unique<ChatDiaglog>(un, pClient,m_CLSocket));
 					m_ChatList.front()->AddUser(un);
+					m_ChatList.front()->SetHandle(m_Window->GetHandle());
 					ImGui::CloseCurrentPopup();
 				}
 				if (ImGui::Button("OK", ImVec2(120, 0))) 
 				{
 					if(strlen(un)) m_ChatList.push_back(std::make_unique<ChatDiaglog>(un, pClient, m_CLSocket));
 					m_ChatList.front()->AddUser(un);
+					m_ChatList.front()->SetHandle(m_Window->GetHandle());
 					ImGui::CloseCurrentPopup(); 
 				}
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel", ImVec2(120, 0))) ImGui::CloseCurrentPopup();
 				ImGui::EndPopup();
 			}
 
 
 			// Create group
 			{
-				if (ImGui::Button("Create Group")) ImGui::OpenPopup("CreateGroup");
+				if (ImGui::Button("Create Group", ImVec2(120, 0))) ImGui::OpenPopup("CreateGroup");
 				if (ImGui::BeginPopupModal("CreateGroup", nullptr, ImGuiWindowFlags_NoResize))
 			{
 				static char un[MAX_USERNAME_LEN];
@@ -473,6 +546,24 @@ void ClientApp::RenderUI()
 					pClient->SetStatus(Client::NONE);
 				}
 			}
+
+
+			if (pClient->GetStatus()==Client::SAVE_FILE) ImGui::OpenPopup("FileDownload");
+		
+			if (ImGui::BeginPopupModal("FileDownload", nullptr, ImGuiWindowFlags_NoResize))
+			{
+				if (ImGui::Button("Save", ImVec2(120, 0)))
+				{
+					SaveFile();
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel", ImVec2(120, 0)))
+				{
+					if (m_File.pData) delete[] m_File.pData;
+					ImGui::CloseCurrentPopup();
+				}
+			}
 		}
 		ImGui::End();
 
@@ -484,6 +575,57 @@ void ClientApp::RenderUI()
 		for (auto& el : m_GroupList)
 		{
 			el->Draw();
+		}
+	}
+}
+
+void ClientApp::ProcessSocket()
+{
+	fd_set ReadFDs, WriteFDs, ExceptFDs;
+	static int iResult;
+	static char recvbuf[MAX_BUFFER_LEN];
+	static int recvbuflen = MAX_BUFFER_LEN;
+	// Prepare the Read and Write socket sets for network I/O notification
+
+	FD_ZERO(&ReadFDs);
+
+	FD_ZERO(&WriteFDs);
+
+
+
+	// Always look for connection attempts
+
+	FD_SET(m_CLSocket.Get(), &ReadFDs);
+	FD_SET(m_CLSocket.Get(), &WriteFDs);
+	timeval time;
+	time.tv_usec = 10;
+	time.tv_sec = 0;
+	if (select(0, &ReadFDs, &WriteFDs, &ExceptFDs, &time) == SOCKET_ERROR) return;
+
+	if (FD_ISSET(m_CLSocket.Get(), &ReadFDs))
+	{
+		iResult = recv(m_CLSocket.Get(), recvbuf, recvbuflen, 0);
+		if (iResult == SOCKET_ERROR)
+		{
+			printf("SOCKET_ERROR\n");
+			return;
+		}
+		else if (iResult == 0)
+		{
+			printf("Server disconnected...\n");
+			exit(0);
+		}
+		else
+		{
+			ProcessCommand(recvbuf, iResult, m_CLSocket.Get());
+		}
+	}
+
+	if (FD_ISSET(m_CLSocket.Get(), &WriteFDs))
+	{
+		if (!m_CLSocket.Send())
+		{
+			printf("ERROR\n");
 		}
 	}
 }
@@ -510,17 +652,58 @@ int ClientApp::FindGroupChat(const char * un)
 	return -1;
 }
 
-bool ClientApp::SendFile(const char * filename)
+void ClientApp::SaveFile()
 {
-	FILE* pFile = fopen(filename, "rb");
-	if (!pFile) return false;
-	fseek(pFile, 0, SEEK_END);
-	auto size = ftell(pFile);
-	fseek(pFIle, 0, SEEK_SET);
+	OPENFILENAME ofn;       // common dialog box structure
+	char szFile[260];       // buffer for file name
+	//HANDLE hf;              // file handle
 
-	char* data = new char[size];
-	fread(data, size, 1, pFile);
-	fclose(pFile);
+							// Initialize OPENFILENAME
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = m_Window->GetHandle();
+	ofn.lpstrFile = szFile;
+	// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
+	// use the contents of szFile to initialize itself.
+	ofn.lpstrFile[0] = '\0';
+	ofn.nMaxFile = sizeof(szFile);
+	//ofn.lpstrFilter = 
+	ofn.nFilterIndex = 1;
+	char* p = (char*)m_File.FileName.c_str();
+	ofn.lpstrFileTitle = p;
+	ofn.nMaxFileTitle = m_File.FileName.size();
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_SHOWHELP | OFN_OVERWRITEPROMPT;
+	//ofn.lpstrDefExt = "jpg";
+	if (GetSaveFileName(&ofn))
+	{
+		FILE* pFile = fopen(ofn.lpstrFile, "wb");
+		if (pFile)
+		{
+			fwrite(m_File.pData, m_File.size, 1, pFile);
+			fclose(pFile);
+		}
+	}
+	delete[] m_File.pData;
+}
 
 
+
+void ClientApp::RunMainLoop()
+{
+	m_Window->ShowWindows();
+	while (!m_Window->ShouldClose())
+	{
+		glfwPollEvents();
+
+		m_Renderer->Clear();
+
+		RenderUI();
+		ProcessSocket();
+		if (m_pModule) m_pModule->Update(0);
+
+		ImGui::Render();
+
+		m_Renderer->SwapBuffer();
+	}
 }

@@ -2,7 +2,7 @@
 #include "Client.h"
 
 
-Client::Client(SOCKET sk, const char* user, const char* pass):m_Socket(sk),m_Username(user),m_Password(pass)
+Client::Client(SOCKET sk, const char* user, const char* pass) :m_Socket(sk), m_Username(user), m_Password(pass), m_Status(OFFLINE)
 {
 }
 
@@ -31,7 +31,7 @@ Client::Status Client::GetStatus()
 
 void Client::SetSocket(SOCKET sk)
 {
-	m_Socket = sk;
+	m_Socket = Socket(sk);
 }
 
 Socket& Client::GetSocket()
