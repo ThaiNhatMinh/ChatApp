@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ClientApp.h"
-
+#define APIENTRY    WINAPI
+#include  <mmsystem.h>
 
 WNDPROC g_MainWndProc;
 LRESULT CALLBACK MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -114,11 +115,13 @@ void ClientApp::ProcessCommand(char * cmd, int len, SOCKET sk)
 			m_ChatList.push_back(std::make_unique<ChatDiaglog>(username,pClient, m_CLSocket));
 			m_ChatList.front()->AddMessenger(username, text);
 			m_ChatList.front()->AddUser(username);
+			PlaySound(TEXT("MouseClick"), NULL, SND_ALIAS);
 
 		}
 		else
 		{
 			m_ChatList[id]->AddMessenger(username, text);
+			PlaySound(TEXT("MouseClick"), NULL, SND_ALIAS);
 			// if not show then show it up
 			if (!m_ChatList[id]->IsOpen()) m_ChatList[id]->Open(1);
 		}
@@ -148,13 +151,14 @@ void ClientApp::ProcessCommand(char * cmd, int len, SOCKET sk)
 		if (ID != -1)
 		{
 			m_GroupList[ID]->AddMessenger(username, msg);
+			PlaySound(L"MouseClick", NULL, SND_SYNC);
 		}
 		else
 		{
 			m_GroupList.push_back(std::make_unique<GroupChat>(grname, pClient, m_CLSocket));
 			m_GroupList.front()->AddMessenger(username, msg);
 			m_GroupList.front()->AddUser(username);
-
+			PlaySound(L"MouseClick", NULL, SND_SYNC);
 			Buffer rqbf(MAX_BUFFER_LEN);
 			rqbf.WriteChar(CMD_GET_GRINFO);
 			rqbf.WriteInt(grlen);
