@@ -29,6 +29,7 @@ void ChatDiaglog::AddMessenger(const char * user, const char * text)
 	mg.Name = user;
 	mg.Text = text;
 	m_ChatData.push_back(mg);
+	ScrollToBottom = true;
 }
 
 void ChatDiaglog::AddUser(std::string name) {
@@ -47,10 +48,11 @@ void ChatDiaglog::AddUser(std::string name) {
 
 void ChatDiaglog::Draw()
 {
+	if (!m_Open) return;
 	ImGui::SetNextWindowSize(ImVec2(400, 300), ImGuiCond_FirstUseEver);
 	ImGui::Begin(m_Title.c_str(), &m_Open);
-
-	ImGui::BeginChild("ScrollingRegion", ImVec2(0, -ImGui::GetItemsLineHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
+	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+	ImGui::BeginChild("ScrollingRegion", ImVec2(0, -ImGui::GetItemsLineHeightWithSpacing()), true, ImGuiWindowFlags_HorizontalScrollbar);
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
 
 	for (size_t i = 0; i < m_ChatData.size(); i++)
@@ -65,7 +67,7 @@ void ChatDiaglog::Draw()
 	ScrollToBottom = false;
 	ImGui::PopStyleVar();
 	ImGui::EndChild();
-
+	ImGui::PopStyleVar();
 
 	if (ImGui::InputText("Input", InputBuf, 256, ImGuiInputTextFlags_EnterReturnsTrue))
 	{

@@ -32,7 +32,7 @@ Windows::Windows()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	GLFWmonitor* m_pMonitor = glfwGetPrimaryMonitor();
 
 	m_iScreenWidth = GetSystemMetrics(SM_CXSCREEN);

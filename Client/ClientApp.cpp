@@ -306,7 +306,7 @@ void ClientApp::RenderUI()
 		ImGui::Begin("Login", &ShowLogin, ImGuiWindowFlags_NoTitleBar| ImGuiWindowFlags_NoResize| ImGuiWindowFlags_NoMove| ImGuiWindowFlags_NoCollapse);
 		ImGui::InputText("Username", InputBuf, IM_ARRAYSIZE(InputBuf), ImGuiInputTextFlags_EnterReturnsTrue);
 		ImGui::InputText("Password", InputBuf2, IM_ARRAYSIZE(InputBuf2), ImGuiInputTextFlags_EnterReturnsTrue| ImGuiInputTextFlags_Password);
-		if (ImGui::Button("Login") && (strlen(InputBuf) && strlen(InputBuf2)))
+		if (ImGui::Button("Login", ImVec2(120, 0)) && (strlen(InputBuf) && strlen(InputBuf2)))
 		{
 			
 			Buffer bf(MAX_BUFFER_LEN);
@@ -328,7 +328,7 @@ void ClientApp::RenderUI()
 			pClient->GetUsername() = InputBuf;
 			pClient->GetPassword() = InputBuf2;
 		}
-		if (ImGui::Button("Register"))
+		if (ImGui::Button("Register", ImVec2(120, 0)))
 		{
 			ShowRegister = !ShowRegister;
 		}
@@ -401,29 +401,41 @@ void ClientApp::RenderUI()
 	{
 		ImGui::Begin("Demo",nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 		{
-			if (ImGui::Button("Send Messenger")) ImGui::OpenPopup("Input Username");
+			if (ImGui::Button("Send Messenger", ImVec2(120, 0))) ImGui::OpenPopup("Input Username");
 			if (ImGui::BeginPopupModal("Input Username",nullptr, ImGuiWindowFlags_NoResize))
 			{
 				static char un[MAX_USERNAME_LEN];
-				if (ImGui::InputText("UserName", un, MAX_USERNAME_LEN, ImGuiInputTextFlags_EnterReturnsTrue))
+				if (ImGui::InputText("UserName", un, MAX_USERNAME_LEN, ImGuiInputTextFlags_EnterReturnsTrue)&& strlen(un))
 				{
-					m_ChatList.push_back(std::make_unique<ChatDiaglog>(un, pClient,m_CLSocket));
-					m_ChatList.front()->AddUser(un);
+					int ID = FindChatDiaglog(un);
+					if (ID == -1)
+					{
+						m_ChatList.push_back(std::make_unique<ChatDiaglog>(un, pClient, m_CLSocket));
+						m_ChatList.front()->AddUser(un);
+					}
+					else
+					{
+						m_ChatList[ID]->Open(1);
+					}
 					ImGui::CloseCurrentPopup();
 				}
-				if (ImGui::Button("OK", ImVec2(120, 0))) 
+				if (ImGui::Button("OK", ImVec2(120, 0)) && strlen(un))
 				{
 					if(strlen(un)) m_ChatList.push_back(std::make_unique<ChatDiaglog>(un, pClient, m_CLSocket));
 					m_ChatList.front()->AddUser(un);
 					ImGui::CloseCurrentPopup(); 
 				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel", ImVec2(120, 0))) ImGui::CloseCurrentPopup();
+
 				ImGui::EndPopup();
 			}
 
 
 			// Create group
 			{
-				if (ImGui::Button("Create Group")) ImGui::OpenPopup("CreateGroup");
+				if (ImGui::Button("Create Group", ImVec2(120, 0))) ImGui::OpenPopup("CreateGroup");
 				if (ImGui::BeginPopupModal("CreateGroup", nullptr, ImGuiWindowFlags_NoResize))
 			{
 				static char un[MAX_USERNAME_LEN];
@@ -516,7 +528,7 @@ bool ClientApp::SendFile(const char * filename)
 	if (!pFile) return false;
 	fseek(pFile, 0, SEEK_END);
 	auto size = ftell(pFile);
-	fseek(pFIle, 0, SEEK_SET);
+	fseek(pFile, 0, SEEK_SET);
 
 	char* data = new char[size];
 	fread(data, size, 1, pFile);

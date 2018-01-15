@@ -3,7 +3,7 @@
 void GroupChat::Draw()
 {
 	ImGui::SetNextWindowSize(ImVec2(400, 300), ImGuiCond_FirstUseEver);
-	ImGui::Begin(m_Title.c_str(), &m_Open,ImGuiWindowFlags_NoResize);
+	ImGui::Begin(m_Title.c_str(), &m_Open, ImGuiWindowFlags_NoResize);
 
 	// ScrollingRegion
 	{
@@ -33,7 +33,7 @@ void GroupChat::Draw()
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
 		ImGui::BeginChild("UserInfoRegion", ImVec2(0, 220), true);
-		
+
 		// print user list
 
 		for (size_t i = 0; i < m_UserList.size(); i++)
@@ -46,7 +46,7 @@ void GroupChat::Draw()
 		if (ImGui::Button("Add user")) ImGui::OpenPopup("AddUser");
 		if (ImGui::BeginPopupModal("AddUser", nullptr, ImGuiWindowFlags_NoResize))
 		{
-			
+
 			if (ImGui::InputText("UserName", un, MAX_USERNAME_LEN, ImGuiInputTextFlags_EnterReturnsTrue))
 			{
 				// Request add user to group
@@ -100,9 +100,9 @@ void GroupChat::Draw()
 		ImGui::EndChild();
 		ImGui::PopStyleVar();
 	}
-	
-	
-	
+
+
+
 
 	// Add messenger
 	{
