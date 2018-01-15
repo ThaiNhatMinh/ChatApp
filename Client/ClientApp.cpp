@@ -95,6 +95,7 @@ void ClientApp::ProcessCommand(char * cmd, int len, SOCKET sk)
 	char* a = bf.ReadChar();
 	bf.IncPos(1);
 	Command type = (Command)(*a);
+
 	switch (type)
 	{
 	case CMD_SEND_USER:
@@ -196,7 +197,6 @@ void ClientApp::ProcessCommand(char * cmd, int len, SOCKET sk)
 	}
 	case CMD_SEND_FILES:
 		break;
-	
 	case CMD_STATUS:
 	{
 		Status s = (Status)*bf.ReadChar();
@@ -280,14 +280,7 @@ void ClientApp::ProcessCommand(char * cmd, int len, SOCKET sk)
 		}
 		break;
 	}
-	/*case CMD_REG_FAIL:
-		pClient->SetStatus(Client::REGISTER_FAIL);
-		break;
-	case CMD_SEND_USER_SUCCESS:
-		break;
-	case CMD_SEND_USER_FAIL:
-		break;
-		*/
+
 	
 	default:
 		break;
@@ -332,6 +325,8 @@ void ClientApp::RenderUI()
 			pClient->GetUsername() = InputBuf;
 			pClient->GetPassword() = InputBuf2;
 		}
+
+
 		if (ImGui::Button("Register", ImVec2(120, 0)))
 		{
 			ShowRegister = !ShowRegister;
@@ -360,7 +355,6 @@ void ClientApp::RenderUI()
 		ImGui::InputText("Password", InputBuf2, IM_ARRAYSIZE(InputBuf2),ImGuiInputTextFlags_Password);
 		if (ImGui::Button("Register") && (strlen(InputBuf) && strlen(InputBuf2)))
 		{
-			//pClient->Register(InputBuf, InputBuf2);
 			Buffer bf(MAX_BUFFER_LEN);
 			char type = CMD_REG_USER;
 			bf.WriteChar(type);
