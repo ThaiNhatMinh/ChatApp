@@ -41,6 +41,7 @@ int Socket::Send(const char * buffer, long len)
 		return SOCKET_ERROR;
 	}
 
+	printf("Send %d byte| %d\n", iResult, len);
 	return iResult;
 }
 

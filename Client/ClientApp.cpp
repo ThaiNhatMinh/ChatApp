@@ -345,14 +345,7 @@ void ClientApp::ProcessCommand(char * cmd, int len, SOCKET sk)
 		}
 		break;
 	}
-	/*case CMD_REG_FAIL:
-		pClient->SetStatus(Client::REGISTER_FAIL);
-		break;
-	case CMD_SEND_USER_SUCCESS:
-		break;
-	case CMD_SEND_USER_FAIL:
-		break;
-		*/
+	
 	
 	default:
 		break;
@@ -474,14 +467,14 @@ void ClientApp::RenderUI()
 			if (ImGui::BeginPopupModal("Input Username",nullptr, ImGuiWindowFlags_NoResize))
 			{
 				static char un[MAX_USERNAME_LEN];
-				if (ImGui::InputText("UserName", un, MAX_USERNAME_LEN, ImGuiInputTextFlags_EnterReturnsTrue))
+				if (ImGui::InputText("UserName", un, MAX_USERNAME_LEN, ImGuiInputTextFlags_EnterReturnsTrue)&&strlen(un)>0)
 				{
 					m_ChatList.push_back(std::make_unique<ChatDiaglog>(un, pClient,m_CLSocket));
 					m_ChatList.front()->AddUser(un);
 					m_ChatList.front()->SetHandle(m_Window->GetHandle());
 					ImGui::CloseCurrentPopup();
 				}
-				if (ImGui::Button("OK", ImVec2(120, 0))) 
+				if (ImGui::Button("OK", ImVec2(120, 0)) && strlen(un)>0)
 				{
 					if(strlen(un)) m_ChatList.push_back(std::make_unique<ChatDiaglog>(un, pClient, m_CLSocket));
 					m_ChatList.front()->AddUser(un);
@@ -581,26 +574,33 @@ void ClientApp::RenderUI()
 
 void ClientApp::ProcessSocket()
 {
-	fd_set ReadFDs, WriteFDs, ExceptFDs;
+	
 	static int iResult;
 	static char recvbuf[MAX_BUFFER_LEN];
 	static int recvbuflen = MAX_BUFFER_LEN;
 	// Prepare the Read and Write socket sets for network I/O notification
 
+	fd_set ReadFDs, WriteFDs, ExceptFDs;
 	FD_ZERO(&ReadFDs);
+	FD_ZERO(&ExceptFDs);
 
-	FD_ZERO(&WriteFDs);
+	// Add the listener socket to the read and except FD sets, if there
+	// is one.
+	if (m_CLSocket.Get() != INVALID_SOCKET)
+	{
+		FD_SET(m_CLSocket.Get(), &ReadFDs);
+		FD_SET(m_CLSocket.Get(), &ExceptFDs);
+	}
 
 
-
-	// Always look for connection attempts
-
-	FD_SET(m_CLSocket.Get(), &ReadFDs);
-	FD_SET(m_CLSocket.Get(), &WriteFDs);
 	timeval time;
-	time.tv_usec = 10;
+	time.tv_usec = 50;
 	time.tv_sec = 0;
-	if (select(0, &ReadFDs, &WriteFDs, &ExceptFDs, &time) == SOCKET_ERROR) return;
+	if (select(0, &ReadFDs, &WriteFDs, &ExceptFDs, &time) == SOCKET_ERROR)
+	{
+		printf("Error: %d\n", WSAGetLastError());
+		return;
+	}
 
 	if (FD_ISSET(m_CLSocket.Get(), &ReadFDs))
 	{
@@ -618,14 +618,6 @@ void ClientApp::ProcessSocket()
 		else
 		{
 			ProcessCommand(recvbuf, iResult, m_CLSocket.Get());
-		}
-	}
-
-	if (FD_ISSET(m_CLSocket.Get(), &WriteFDs))
-	{
-		if (!m_CLSocket.Send())
-		{
-			printf("ERROR\n");
 		}
 	}
 }
@@ -697,7 +689,7 @@ void ClientApp::RunMainLoop()
 		glfwPollEvents();
 
 		m_Renderer->Clear();
-
+		
 		RenderUI();
 		ProcessSocket();
 		if (m_pModule) m_pModule->Update(0);

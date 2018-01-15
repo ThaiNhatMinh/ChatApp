@@ -11,24 +11,6 @@ CLSocket::~CLSocket()
 {
 }
 
-bool CLSocket::Send()
-{
-	int iResult = send(m_Socket, buffer, current, 0);
-
-	if (iResult == SOCKET_ERROR) {
-		printf("send failed with error: %d\n", WSAGetLastError());
-		return SOCKET_ERROR;
-	}
-	current = 0;
-	return iResult;
-
-}
-int CLSocket::Send(const char * buffer, long len)
-{
-	memcpy(this->buffer, buffer, len);
-	current = 0;
-	return 1;
-}
 bool CLSocket::Connect(const char * name, const char * port)
 {
 	struct addrinfo *result = NULL,
